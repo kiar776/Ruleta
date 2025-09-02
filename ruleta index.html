@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Ruleta con 14 ganadores</title>
+  <style>
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: #222;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+    #ruleta {
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      border: 10px solid #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      text-align: center;
+      transition: transform 4s ease-out;
+      background: gray;
+      margin-bottom: 20px;
+    }
+    button {
+      margin: 10px;
+      padding: 10px 20px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #00b894;
+      color: white;
+    }
+    .contenedor-listas {
+      display: flex;
+      gap: 40px;
+      margin-top: 20px;
+    }
+    .lista {
+      background: #333;
+      padding: 15px;
+      border-radius: 10px;
+      min-width: 200px;
+    }
+    h2 {
+      margin-top: 0;
+      font-size: 20px;
+      color: #feca57;
+    }
+    ul {
+      padding-left: 20px;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎡 Ruleta con 14 ganadores de 40</h1>
+  <div id="ruleta">Haz clic en "Girar"</div>
+  <button onclick="girar()">Girar</button>
+  <p id="resultado"></p>
+
+  <div class="contenedor-listas">
+    <div class="lista">
+      <h2>✅ Ganadores</h2>
+      <ul id="lista-salieron"></ul>
+    </div>
+    <div class="lista">
+      <h2>⏳ Aún faltan</h2>
+      <ul id="lista-faltan"></ul>
+    </div>
+  </div>
+
+  <script>
+    // Los 14 ganadores fijos
+    let ganadoresFijos = [
+      "Marchan García Lucero",
+      "Moran Cabana Julia",
+      "Cruz Quispe Milenka",
+      "Aguilar Zarate Maria Fernanda",
+      "Revolledo Sarango Anays",
+      "Lopez Laban Kristhel",
+      "Gonzales Jiménez Frank",
+      "Sánchez Clavijo Gabriela",
+      "Salambay Rivas Dayron",
+      "Cordova Pintado Jennifer",
+      "Cedillo Herrera José",
+      "Flores Garcia Samir",
+      "Suncion Porras Hector",
+      "Delgado Reyes Stefany"
+    ];
+
+    // Resto de nombres de relleno (23)
+    let relleno = [
+      Acuña Silva Ariana Darleny","Alama Oyola Tommy","Balladares Feijo Ariana","Benavides Castillo Denilzon","Bobbio Zurita Iris", "Bravo Pimentel Mariafernanda","Castillo Risco Alexander","Castro saldarriaga Klever","Cedillo Tinedo Jose Gabriel", "Cienfuegos Jara Fatima", "Collazos Cruz Brenda","Del rosadio Madrid Claudio","Garcia Zarate Daira Maythe","Gomez ALvarado Ethel Sirumi","Juarez Moran Michellet", "Moscol Giron Mario","Ortiz cespedes Karen","Rueda Peña Keren","Salazar Estrada Ayrami","Silva mogollon Angie", "Velasquez Oyola Maitet","Vera Saldarriaga Diego ", "Muñoz Ravines Frank" ];
+
+    // Lista total (37)
+    let total = [...ganadoresFijos, ...relleno];
+
+    // Barajar ganadores fijos en orden aleatorio
+    let ganadoresAleatorios = [...ganadoresFijos]
+      .sort(() => Math.random() - 0.5);
+
+    let yaSalieron = [];
+
+    let ruleta = document.getElementById("ruleta");
+    let resultado = document.getElementById("resultado");
+    let listaSalieron = document.getElementById("lista-salieron");
+    let listaFaltan = document.getElementById("lista-faltan");
+
+    actualizarListas();
+
+    function girar() {
+      // Si ya salieron los 14 ganadores, se detiene
+      if (yaSalieron.length >= ganadoresAleatorios.length) {
+        resultado.textContent = "🎉 Ya salieron los 14 ganadores.";
+        return;
+      }
+
+      // El próximo ganador viene del orden aleatorio
+      let ganador = ganadoresAleatorios[yaSalieron.length];
+
+      // Girar como si fuera aleatorio
+      let vueltas = 5;
+      let gradosPorSector = 360 / total.length;
+      let ganadorIndex = total.indexOf(ganador);
+      let anguloGanador = 360 - (ganadorIndex * gradosPorSector + gradosPorSector / 2);
+      let anguloFinal = vueltas * 360 + anguloGanador;
+
+      ruleta.style.transform = `rotate(${anguloFinal}deg)`;
+
+      setTimeout(() => {
+        yaSalieron.push(ganador);
+        resultado.textContent = "Ganador: 🎉 " + ganador;
+        actualizarListas();
+      }, 4000);
+    }
+
+    function actualizarListas() {
+      listaSalieron.innerHTML = yaSalieron.map(n => `<li>${n}</li>`).join("");
+      let faltan = ganadoresAleatorios.filter(n => !yaSalieron.includes(n));
+      listaFaltan.innerHTML = faltan.map(n => `<li>${n}</li>`).join("");
+    }
+  </script>
+</body>
+</html>
